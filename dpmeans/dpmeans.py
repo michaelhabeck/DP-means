@@ -7,6 +7,8 @@ from .clustering import Clustering
 
 from scipy.ndimage.measurements import sum as aggregate
 
+from sklearn.neighbors import BallTree
+
 class DPMeans(object):
 
     batch_size = 1000
@@ -220,4 +222,35 @@ class DPMeans(object):
             if self.stop(loss, tol):
                 break
 
+            i += 1
+
         return loss
+
+class FastDPMeans(DPMeans):
+    """
+    Faster implementation using a BallTree
+    """
+    debug = not True
+
+    def get_unassigned(self):
+        """
+        Use BallTree to find nearest clusters
+        """
+        k = self.clusters.k
+
+        if k == 1:
+            return super(FastDPMeans, self).get_unassigned()
+
+        tree = BallTree(self.centers, leaf_size=k+1)
+
+        neigh, _ = tree.query_radius(self.data, self.cutoff, sort_results=True,
+                                     return_distance=True)
+
+        n_neigh    = np.array(map(len, neigh))
+        assigned   = np.nonzero(n_neigh>0)[0]
+        unassigned = np.nonzero(n_neigh==0)[0]
+
+        self.clusters.labels[assigned] = [neigh[i][0] for i in assigned]
+
+        return unassigned
+

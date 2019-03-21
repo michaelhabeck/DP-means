@@ -23,10 +23,10 @@ def generate_data(n_points, n_clusters, sigma=1., n_sigma=3, dim=2):
 
     return data, labels, centers
 
-n, k   = 1000, 3
+n, k   = 10000, 30
 cutoff = 5.
 
-data, labels, centers = generate_data(n, k, n_sigma=5)
+data, labels, centers = generate_data(n, k, n_sigma=10)
 
 ## compute loss of true clustering
 
@@ -40,9 +40,11 @@ loss_truth = dpmeans.loss()
 
 dpmeans = dp.DPMeans(data, cutoff)
 
-loss = dpmeans.run(verbose=1)
+t = time.clock()
+loss = dpmeans.run(verbose=10)
+print time.clock() - t
 
-fig, ax = plt.subplots(1,3,figsize=(12,4))
+fig, ax = plt.subplots(2,3,figsize=(12,8))
 ax = list(ax.flat)
 
 for i in range(k):
@@ -51,5 +53,20 @@ for i in range(dpmeans.clusters.k):
     ax[1].scatter(*data[dpmeans.clusters.labels==i].T)
 ax[2].plot(loss, lw=3)
 ax[2].axhline(loss_truth, color='r', ls='--', lw=2)
+
+## run fast DP-means
+
+dpmeans = dp.FastDPMeans(data, cutoff)
+
+t = time.clock()
+loss = dpmeans.run(verbose=10)
+print time.clock() - t
+
+for i in range(k):
+    ax[3].scatter(*data[labels==i].T)
+for i in range(dpmeans.clusters.k):
+    ax[4].scatter(*data[dpmeans.clusters.labels==i].T)
+ax[5].plot(loss, lw=3)
+ax[5].axhline(loss_truth, color='r', ls='--', lw=2)
 
 fig.tight_layout()
