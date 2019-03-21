@@ -1,8 +1,9 @@
 import os
 import sys
 import numpy
+import distutils
 
-from setuptools import setup, find_packages, Extension
+from distutils.core import setup, Extension
 
 try:
     __doc__ = open('readme.md').read()
@@ -10,10 +11,6 @@ except IOError:
     pass
 
 __file__ = './'
-ROOT            = 'dpmeans'
-LOCATION        = os.path.abspath(os.path.dirname(__file__))
-JUNK            = []
-
 NAME            = "dpmeans"
 VERSION         = "0.1"
 AUTHOR          = "Michael Habeck"
@@ -26,7 +23,7 @@ REQUIRES        = ['numpy', 'scipy', 'sklearn']
 
 setup(
     name=NAME,
-    packages=find_packages(exclude=('tests',)),
+    packages=[NAME],
     version=VERSION,
     author=AUTHOR,
     author_email=EMAIL,

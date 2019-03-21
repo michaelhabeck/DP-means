@@ -42,7 +42,7 @@ dpmeans = dp.DPMeans(data, cutoff)
 
 t = time.clock()
 loss = dpmeans.run(verbose=10)
-print time.clock() - t
+print(time.clock() - t)
 
 fig, ax = plt.subplots(2,3,figsize=(12,8))
 ax = list(ax.flat)
@@ -60,7 +60,7 @@ dpmeans = dp.FastDPMeans(data, cutoff)
 
 t = time.clock()
 loss = dpmeans.run(verbose=10)
-print time.clock() - t
+print(time.clock() - t)
 
 for i in range(k):
     ax[3].scatter(*data[labels==i].T)

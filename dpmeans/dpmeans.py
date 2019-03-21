@@ -211,13 +211,15 @@ class DPMeans(object):
         loss = []
         i = 0
 
+        output = 'iter={0}, cutoff={1:.1f}, #clusters={2}, loss={3:.3e}'
+
         while i < n_iter:
 
             next(self)
             loss.append(self.loss())
             
             if verbose and not i % verbose:
-                print i, self.cutoff, self.clusters.k, loss[-1]
+                print(output.format(i, self.cutoff, self.clusters.k, loss[-1]))
 
             if self.stop(loss, tol):
                 break
@@ -230,8 +232,6 @@ class FastDPMeans(DPMeans):
     """
     Faster implementation using a BallTree
     """
-    debug = not True
-
     def get_unassigned(self):
         """
         Use BallTree to find nearest clusters
