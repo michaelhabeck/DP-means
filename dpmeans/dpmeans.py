@@ -5,7 +5,7 @@ import numpy as np
 
 from .clustering import Clustering
 
-from scipy.ndimage.measurements import sum as aggregate
+from scipy import ndimage
 
 from sklearn.neighbors import BallTree
 
@@ -141,12 +141,12 @@ class DPMeans(object):
         clusters = np.arange(self.clusters.k)
         labels   = self.clusters.labels
         
-        weights  = aggregate(self.weights, labels, index=clusters)
+        weights  = ndimage.sum(self.weights, labels, index=clusters)
 
         centers  = np.zeros((self.data.shape[1], len(clusters)))
         for d in xrange(self.data.shape[1]):
             values = self.weights * self.data[:,d]
-            centers[d,...] = aggregate(values, labels, index=clusters)
+            centers[d,...] = ndimage.sum(values, labels, index=clusters)
         centers /= (weights + self.eps)
 
         self._centers[:len(clusters)] = centers.T
@@ -243,8 +243,8 @@ class FastDPMeans(DPMeans):
 
         tree = BallTree(self.centers, leaf_size=k+1)
 
-        neigh, _ = tree.query_radius(self.data, self.cutoff, sort_results=True,
-                                     return_distance=True)
+        neigh, _   = tree.query_radius(self.data, self.cutoff, sort_results=True,
+                                       return_distance=True)
 
         n_neigh    = np.array(map(len, neigh))
         assigned   = np.nonzero(n_neigh>0)[0]
