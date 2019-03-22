@@ -88,6 +88,9 @@ class DPMeans(object):
         return '{0}(n_clusters={1})'.format(
             self.__class__.__name__, self.clusters.k)
 
+    def __iter__(self):
+        return self
+
     def _add_new_batch(self):
         """
         Private method that augments the array holding the cluster
@@ -144,14 +147,14 @@ class DPMeans(object):
         weights  = ndimage.sum(self.weights, labels, index=clusters)
 
         centers  = np.zeros((self.data.shape[1], len(clusters)))
-        for d in xrange(self.data.shape[1]):
+        for d in range(self.data.shape[1]):
             values = self.weights * self.data[:,d]
             centers[d,...] = ndimage.sum(values, labels, index=clusters)
         centers /= (weights + self.eps)
 
         self._centers[:len(clusters)] = centers.T
 
-    def next(self):
+    def __next__(self):
         """
         A single DP-means iteration that sweeps over all data points
         in some random order
@@ -213,9 +216,11 @@ class DPMeans(object):
 
         output = 'iter={0}, cutoff={1:.1f}, #clusters={2}, loss={3:.3e}'
 
+        dpmeans = iter(self)
+
         while i < n_iter:
 
-            next(self)
+            next(dpmeans)
             loss.append(self.loss())
             
             if verbose and not i % verbose:
@@ -246,7 +251,7 @@ class FastDPMeans(DPMeans):
         neigh, _   = tree.query_radius(self.data, self.cutoff, sort_results=True,
                                        return_distance=True)
 
-        n_neigh    = np.array(map(len, neigh))
+        n_neigh    = np.array(list(map(len, neigh)))
         assigned   = np.nonzero(n_neigh>0)[0]
         unassigned = np.nonzero(n_neigh==0)[0]
 

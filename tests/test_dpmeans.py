@@ -1,6 +1,7 @@
 """
 Test DP-means for simple 2D data set
 """
+import time
 import numpy as np
 import dpmeans as dp
 import matplotlib.pylab as plt
