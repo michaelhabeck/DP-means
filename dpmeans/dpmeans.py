@@ -216,11 +216,11 @@ class DPMeans(object):
 
         output = 'iter={0}, cutoff={1:.1f}, #clusters={2}, loss={3:.3e}'
 
-        dpmeans = iter(self)
+        dpmeans = self.__iter__() #iter(self)
 
         while i < n_iter:
 
-            next(dpmeans)
+            dpmeans.__next__() #next(dpmeans)
             loss.append(self.loss())
             
             if verbose and not i % verbose:
