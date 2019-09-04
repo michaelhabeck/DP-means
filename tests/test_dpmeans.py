@@ -1,10 +1,11 @@
 """
 Test DP-means for simple 2D data set
 """
-import time
 import numpy as np
 import dpmeans as dp
 import matplotlib.pylab as plt
+
+from timeit import default_timer as timer
 
 def generate_data(n_points, n_clusters, sigma=1., n_sigma=3, dim=2):
     """
@@ -41,9 +42,10 @@ loss_truth = dpmeans.loss()
 
 dpmeans = dp.DPMeans(data, cutoff)
 
-t = time.clock()
-loss = dpmeans.run(verbose=10)
-print(time.clock() - t)
+start = timer()
+loss  = dpmeans.run(verbose=10)
+end   = timer()
+print(end - start)
 
 fig, ax = plt.subplots(2,3,figsize=(12,8))
 ax = list(ax.flat)
@@ -59,9 +61,10 @@ ax[2].axhline(loss_truth, color='r', ls='--', lw=2)
 
 dpmeans = dp.FastDPMeans(data, cutoff)
 
-t = time.clock()
-loss = dpmeans.run(verbose=10)
-print(time.clock() - t)
+start = timer()
+loss  = dpmeans.run(verbose=10)
+end   = timer()
+print(end - start)
 
 for i in range(k):
     ax[3].scatter(*data[labels==i].T)
