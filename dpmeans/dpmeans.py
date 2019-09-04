@@ -154,7 +154,7 @@ class DPMeans(object):
 
         self._centers[:len(clusters)] = centers.T
 
-    def __next__(self):
+    def next(self):
         """
         A single DP-means iteration that sweeps over all data points
         in some random order
@@ -164,6 +164,9 @@ class DPMeans(object):
             self.assign_point(i)
 
         self.update_centers()
+
+    ## py2/3 compatibility
+    __next__ = next
 
     def fitness(self):
         """
@@ -220,7 +223,7 @@ class DPMeans(object):
 
         while i < n_iter:
 
-            dpmeans.__next__() #next(dpmeans)
+            next(dpmeans)
             loss.append(self.loss())
             
             if verbose and not i % verbose:
