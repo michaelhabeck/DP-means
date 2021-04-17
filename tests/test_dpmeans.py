@@ -30,16 +30,14 @@ cutoff = 5.
 
 data, labels, centers = generate_data(n, k, n_sigma=10)
 
-## compute loss of true clustering
-
+# compute loss of true clustering
 dpmeans = dp.DPMeans(data, cutoff)
 dpmeans.clusters.labels[...] = labels
 dpmeans._centers[:dpmeans.clusters.k,:] = centers
 
 loss_truth = dpmeans.loss()
 
-## run DP-means
-
+# run DP-means
 dpmeans = dp.DPMeans(data, cutoff)
 
 start = timer()
@@ -57,8 +55,7 @@ for i in range(dpmeans.clusters.k):
 ax[2].plot(loss, lw=3)
 ax[2].axhline(loss_truth, color='r', ls='--', lw=2)
 
-## run fast DP-means
-
+# run fast DP-means
 dpmeans = dp.FastDPMeans(data, cutoff)
 
 start = timer()
